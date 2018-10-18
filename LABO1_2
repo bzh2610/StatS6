@@ -1,0 +1,162 @@
+//Evan OLLIVIER
+//LABO 1 ET 2
+//S6A
+//2018
+
+function tp1(taille)
+   title("Répartition loi uniforme")
+   xlabel("Valeur du lancé")
+   ylabel("Répartition de la valeur")
+   valeurs  = grand(1, taille, "uin", 1, 6)
+   result=histplot(linspace(0,6,7), valeurs)
+       disp(result)
+//   disp(cumsum(result))
+   scf()
+ 
+   bar(cumsum(result))
+   //1M de valeurs permet d'avoir une probabilité proché d'1/6 pour chaque valeur.
+   
+   
+endfunction
+
+
+
+function lance_deux_des(taille)
+    
+    title("Répartition loi uniforme pour "+string(taille)+" lancés de dés")
+    xlabel("Valeur du lancé")
+    ylabel("Répartition de la valeur")
+    des1=grand(1, taille, "uin", 1, 6)+grand(1, taille, "uin", 1, 6)
+    result = tabul(des1) //On compile le nombre de résultats par valeur
+    result(:, 2)=result(:, 2)/taille //On obtient la proba. de chaque elements
+    result=gsort(result, 'lr', 'i') //On trie par index croissant
+    bar(result(:, 1), result(:, 2))
+   // result = histplot(linspace(1,13,12),  tabul(result,"i"))
+
+endfunction
+
+
+function question4()
+    lance_deux_des(100)
+    scf()
+    lance_deux_des(1000)
+    scf()
+    lance_deux_des(10000)
+endfunction
+
+
+function question5()
+    //Réessayer en implémentant directement l'histogramme
+    result=[0 0 0 0 0 0]
+    liste=[]
+    //resultat_experience=[1,:]
+    taille=100000
+    for i = 1:taille
+        experience = grand(1, 1, "uin", 1, 11);
+       
+        if (experience==1) then
+            result(1)=result(1)+1 //1 chance sur 11
+             liste($+1)=1; //On ajoute la valeur à la liste des valeurs tirées
+        elseif (experience <= 4) then
+            result(2)=result(2)+1 // (4-1) / 11
+             liste($+1)=2; //On ajoute la valeur à la liste des valeurs tirées
+        elseif (experience <= 6) then
+            result(3)=result(3)+1 // (6-4)
+             liste($+1)=3; //On ajoute la valeur à la liste des valeurs tirées
+        elseif (experience <= 10) then
+            result(4)=result(4)+1 // (10-6)
+             liste($+1)=4; //On ajoute la valeur à la liste des valeurs tirées
+        else 
+            result(5)=result(5)+1
+             liste($+1)=5; //On ajoute la valeur à la liste des valeurs tirées
+        end
+    end
+    result=result/taille
+    bar(result)
+    //Ici on a juste une valeur quantitative
+    scf()
+    
+    //Ici, on a les tirages de manière qualitative
+    result2 = tabul(liste) //On compile le nombre de résultats par valeur
+    result2(:, 2)=result2(:, 2)/taille //On obtient la proba. de chaque elements
+    result2=gsort(result2, 'lr', 'i') //On trie par index croissant
+    bar(result2(:, 1), result2(:, 2))
+    
+endfunction
+
+
+
+
+function question6()
+    
+    
+    nombre_de_lances = 10
+    for p = 0.25:0.25:0.99
+         experience = grand(1, nombre_de_lances, "bin", 1, p);
+         result2 = tabul(experience) //On compile le nombre de résultats par valeur
+         result2(:, 2)=result2(:, 2)/nombre_de_lances //On obtient la proba. de chaque elements
+         result2=gsort(result2, 'lr', 'i') //On trie par index croissant
+         scf()
+         bar(result2(:, 1), result2(:, 2))
+         title("FDR sur 10 lancés, avec P="+string(p))
+    end
+endfunction
+
+
+
+function question7()
+       nombre_de_lances = 1000
+    S0=0 // 0: echec
+    S1=0 // 1: succes
+    result=x
+    p = 0.5
+    for index = 1:10
+        resultatexp=gsort(tabul(grand(1, nombre_de_lances, "bin", 1, p)),  'lr', 'i')
+        S1  = S1+ resultatexp(2, 2)
+        S0 = S0 + resultatexp(1, 2)
+         disp(resultatexp)
+         //tabul(experience) //On compile le nombre de résultats par valeur
+        // result(:, 2)=result2(:, 2)/nombre_de_lances //On obtient la proba. de chaque elements
+        // result=gsort(result2, 'lr', 'i') //On trie par index croissant
+        // scf()
+        // bar(result2(:, 1), result2(:, 2))
+        // title("FDR sur 10 lancés, avec P="+string(p))
+    end
+   
+     bar([0, 1], [S0/nombre_de_lances/10, S1/nombre_de_lances/10] )
+endfunction
+
+
+
+
+
+function question8()
+    
+N = 10000;
+lambda = 6;
+titre='Loi de Poisson de parametre lambda='+string(lambda)+' par avec N='+string(N)
+x = grand(1,N,"poi", lambda);
+x2 = grand(1, N, "poi", lambda/2)
+y=tabul(x,"i")
+y2=tabul(x2, "i")
+
+bar(y(:,1), y(:,2)/N )
+xtitle("x1", "k", "P(X=k)")
+scf()
+
+bar(y2(:,1), y2(:,2)/N )
+xtitle("x2", "k", "P(X=k)")
+//scf()
+
+//bar( y(:,2)/N + y2(:,2)/N )
+//xtitle("x1+x2", "k", "P(X=k)")
+
+
+
+
+endfunction
+//tp1(100)
+//question4()
+//question5()
+//question6()
+//question8()
